@@ -1,103 +1,98 @@
-# :Português: [Leia este README em Português](./README.pt-br.md)
+
+# Integração Laravel Livewire Select2
+
+> **Este exemplo utiliza o Laravel 12.**
 
 
-> **This example uses Laravel 12.**
-
-## Requirements
+## Requisitos
 
 - PHP >= 8.2
 - Composer
 - Node.js >= 18
 - NPM
-- SQLite (or other database)
+- SQLite (ou outro banco de dados configurado)
 - Laravel 12
 
-# Laravel Livewire Select2 Integration
+Este repositório demonstra uma forma simples e robusta de usar o plugin Select2 jQuery com Laravel Livewire, resolvendo problemas comuns enfrentados por desenvolvedores ao integrar campos select dinâmicos em componentes Livewire.
 
+## Por que este script?
 
-This repository demonstrates a simple and robust way to use the Select2 jQuery plugin with Laravel Livewire, solving common issues developers face when integrating dynamic select fields in Livewire components.
+Muitos desenvolvedores têm dificuldade em fazer o Select2 funcionar perfeitamente com o Livewire devido a re-renderizações do DOM e sincronização de estado. Este script oferece uma solução limpa, permitindo que você use o Select2 em seus formulários Livewire sem dores de cabeça.
 
-## Why This Script?
+## Funcionalidades
 
-Many developers struggle to make Select2 work seamlessly with Livewire due to DOM re-renders and state synchronization. This script provides a clean solution, allowing you to use Select2 in your Livewire forms without headaches.
+- Inicialização plug-and-play do Select2 para formulários Livewire
+- Carregamento AJAX dinâmico com dependências (ex: subcategorias baseadas na categoria)
+- Preenchimento automático e sincronização de valores entre Select2 e Livewire
 
-## Features
+## Como funciona
 
-- Plug-and-play Select2 initialization for Livewire forms
-- Dynamic AJAX loading with dependencies (e.g., subcategories based on category)
-- Automatic value prefill and state sync between Select2 and Livewire
+O script utiliza atributos personalizados `data-` e eventos do Livewire para:
 
+- Inicializar campos Select2 após cada atualização do Livewire
+- Sincronizar valores do Select2 com propriedades do Livewire
+- Preencher campos Select2 ao editar registros existentes
+- Lidar com selects dependentes (ex: subcategoria depende da categoria)
 
-## How It Works
+### Sobre os data-attributes
 
+Cada campo Select2 utiliza um conjunto de atributos `data-` para controlar seu comportamento e integração com o Livewire:
 
-The script leverages custom data attributes and Livewire events to:
+- `data-init-select2-document-form`: Usado como seletor para inicializar o Select2 no campo. **É altamente recomendável usar um valor único por formulário/página/modal, ex: `data-init-select2-meuform`**, para evitar conflitos de JavaScript, especialmente ao usar múltiplos formulários ou modais na mesma página.
+- `data-livewire-prop`: A propriedade do Livewire que será atualizada quando o valor do select mudar (ex: `state.category_id`).
+- `data-placeholder`: O texto do placeholder exibido no select.
+- `data-min-length`: Número mínimo de caracteres antes de disparar a busca AJAX.
+- `data-api-url`: Endpoint da API para carregamento AJAX das opções.
+- `data-per-page`: Número de resultados por página para requisições AJAX.
+- `data-dep-selector`: (Opcional) Seletor jQuery para um campo dependente (ex: subcategoria depende da categoria).
+- `data-dep-param`: (Opcional) Nome do parâmetro enviado para a API com o valor dependente (ex: `category_id`).
 
-- Initialize Select2 fields after every Livewire update
-- Sync Select2 values with Livewire properties
-- Prefill Select2 fields when editing existing records
-- Handle dependent selects (e.g., subcategory depends on category)
-
-### About the data-attributes
-
-Each Select2 field uses a set of `data-` attributes to control its behavior and integration with Livewire:
-
-- `data-init-select2-document-form`: Used as a selector for initializing Select2 on the field. **It is highly recommended to use a unique value per form/page/modal, e.g., `data-init-select2-myform`**, to avoid JavaScript conflicts, especially when using multiple forms or modals on the same page.
-- `data-livewire-prop`: The Livewire property that will be updated when the select value changes (e.g., `state.category_id`).
-- `data-placeholder`: The placeholder text shown in the select.
-- `data-min-length`: Minimum number of characters before triggering the AJAX search.
-- `data-api-url`: The API endpoint for AJAX loading of options.
-- `data-per-page`: Number of results per page for AJAX requests.
-- `data-dep-selector`: (Optional) jQuery selector for a dependent field (e.g., subcategory depends on category).
-- `data-dep-param`: (Optional) The parameter name sent to the API for the dependent value (e.g., `category_id`).
-
-**Example of customizing the selector:**
+**Exemplo de personalização do seletor:**
 
 ```blade
-<select data-init-select2-myform ...>
+<select data-init-select2-meuform ...>
 ```
 
-Update your initialization script and selectors accordingly to match your custom attribute.
+Atualize seu script de inicialização e seletores conforme necessário para corresponder ao seu atributo personalizado.
 
-## Usage
+## Como usar
 
-
-### 1. Add Select2 Fields in Your Blade View
+### 1. Adicione os campos Select2 na sua Blade View
 
 ```blade
 <select id="categoryList" data-width="100%"
 	class="form-select categoryList"
-	data-init-select2-myform
+	data-init-select2-meuform
 	data-livewire-prop="state.category_id"
-	data-placeholder="Select the Category"
+	data-placeholder="Selecione a Categoria"
 	data-min-length="3"
 	data-api-url="{{ route('api.category.index') }}"
 	data-per-page="20" required>
-	<option value="">Select the Category</option>
+	<option value="">Selecione a Categoria</option>
 </select>
 
 <select id="subcategoryList" data-width="100%"
 	class="form-select subcategoryList"
-	data-init-select2-myform
+	data-init-select2-meuform
 	data-livewire-prop="state.subcategory_id"
-	data-placeholder="Select the SubCategory"
+	data-placeholder="Selecione a Subcategoria"
 	data-min-length="0"
 	data-api-url="{{ route('api.subcategory.index') }}"
 	data-dep-selector="#categoryList"
 	data-dep-param="category_id"
 	data-per-page="20" required>
-	<option value="">Select the SubCategory</option>
+	<option value="">Selecione a Subcategoria</option>
 </select>
 ```
 
 
-### 2. Include the JavaScript
+### 2. Inclua o JavaScript
 
-Add the following script to your Blade view (usually via `@push('scripts')`). This script:
+Adicione o seguinte script à sua view Blade (geralmente via `@push('scripts')`). Este script:
 
-- Initializes Select2 on all fields with your custom `data-init-select2-*` attribute
-- Handles AJAX loading, dependencies, and Livewire property sync
-- Listens for Livewire and custom events to re-initialize or prefill fields
+- Inicializa o Select2 em todos os campos com seu atributo personalizado `data-init-select2-*`
+- Gerencia carregamento AJAX, dependências e sincronização com o Livewire
+- Escuta eventos do Livewire e eventos customizados para reinicializar ou preencher campos
 
 ```blade
 @push('scripts')
@@ -224,14 +219,13 @@ Add the following script to your Blade view (usually via `@push('scripts')`). Th
 @endpush
 ```
 
-### 3. Livewire Component Integration
+### 3. Integração no componente Livewire
 
+No seu componente Livewire (ex: `DocumentForm`):
 
-In your Livewire component (e.g., `DocumentForm`):
+- Use `$this->dispatch('prefill-select2-document-form', ...)` para preencher valores ao editar
 
-- Use `$this->dispatch('prefill-select2-document-form', ...)` to prefill values when editing
-
-Example:
+Exemplo:
 
 ```php
 public function mount($document = null)
@@ -257,46 +251,47 @@ public function mount($document = null)
 }
 ```
 
-## Running the Example Project
+## Executando o projeto de exemplo
 
-1. **Clone the repository:**
+1. **Clone o repositório:**
    ```bash
    git clone https://github.com/manuelluvuvamo/laravel-livewire-select2
    cd laravel-livewire-select2
    ```
 
-2. **Install dependencies:**
+2. **Instale as dependências:**
    ```bash
    composer install
    npm install && npm run build
    ```
 
-3. **Set up the environment:**
-   - Copy `.env.example` to `.env` and configure your database (SQLite is pre-configured).
-   - Run migrations and seeders:
+3. **Configure o ambiente:**
+   - Copie `.env.example` para `.env` e configure seu banco de dados (SQLite já está pré-configurado).
+   - Rode as migrations e seeders:
 	 ```bash
 	 php artisan migrate --seed
 	 ```
 
-4. **Start the project:**
+
+4. **Inicie o projeto:**
 	```bash
 	composer run dev
 	```
 
-5. **Access the app:**
-   - Open your browser at [http://localhost:8000](http://localhost:8000)
+5. **Acesse o app:**
+   - Abra seu navegador em [http://localhost:8000](http://localhost:8000)
 
-## Exploring the Example
+## Explorando o exemplo
 
-- Try creating and editing documents using the form.
-- The Category and SubCategory fields use Select2 with AJAX and dependency.
-- All select fields are fully synchronized with Livewire state.
+- Tente criar e editar documentos usando o formulário.
+- Os campos Categoria e Subcategoria usam Select2 com AJAX e dependência.
+- Todos os campos select estão totalmente sincronizados com o estado do Livewire.
 
-## Customization
+## Customização
 
-- You can adapt the script for other Select2 fields by following the same data attribute conventions.
-- For more complex dependencies, adjust the JavaScript as needed.
+- Você pode adaptar o script para outros campos Select2 seguindo as mesmas convenções de data-attributes.
+- Para dependências mais complexas, ajuste o JavaScript conforme necessário.
 
-## License
+## Licença
 
 MIT
