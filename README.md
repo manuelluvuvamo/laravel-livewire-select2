@@ -1,5 +1,6 @@
 # :Português: [Leia este README em Português](./README.pt-br.md)
 
+# Laravel Livewire Select2 Integration
 
 > **This example uses Laravel 12.**
 
@@ -11,9 +12,6 @@
 - NPM
 - SQLite (or other database)
 - Laravel 12
-
-# Laravel Livewire Select2 Integration
-
 
 This repository demonstrates a simple and robust way to use the Select2 jQuery plugin with Laravel Livewire, solving common issues developers face when integrating dynamic select fields in Livewire components.
 
