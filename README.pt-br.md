@@ -1,6 +1,18 @@
 
 # Integração Laravel Livewire Select2
 
+> **Este exemplo utiliza o Laravel 12.**
+
+
+## Requisitos
+
+- PHP >= 8.2
+- Composer
+- Node.js >= 18
+- NPM
+- SQLite (ou outro banco de dados configurado)
+- Laravel 12
+
 Este repositório demonstra uma forma simples e robusta de usar o plugin Select2 jQuery com Laravel Livewire, resolvendo problemas comuns enfrentados por desenvolvedores ao integrar campos select dinâmicos em componentes Livewire.
 
 ## Por que este script?
